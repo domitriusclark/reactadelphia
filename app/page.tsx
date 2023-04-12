@@ -1,7 +1,14 @@
+import Image from "next/image";
+
 export default function Home() {
   return (
     <main className="flex flex-col items-center justify-between min-h-screen p-24">
-      <h1 className="text-3xl">Reactadelphia</h1>
+      <Image
+        src="/reactadelphia_logo.png"
+        alt="Reactadelphia logo"
+        width={500}
+        height={300}
+      />
     </main>
   );
 }
