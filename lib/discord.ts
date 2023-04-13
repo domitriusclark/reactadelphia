@@ -1,3 +1,6 @@
+// ts ignore
+// @ts-ignore
+
 import type {
   APIGuild,
   APIChannel,
