@@ -6,12 +6,12 @@ import type {
   APIThreadChannel,
   APIUser,
   APIGuildForumChannel,
-  Invite,
+  RESTPostAPIChannelInviteResult,
 } from "discord-api-types/v9";
 
 export async function createChannelInvite(
   channelId: string | number | undefined
-): Promise<Invite> {
+): Promise<RESTPostAPIChannelInviteResult> {
   try {
     const channel = await getChannel(channelId);
     const parent = channel.parent_id;

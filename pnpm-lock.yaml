@@ -16,6 +16,9 @@ dependencies:
   autoprefixer:
     specifier: 10.4.14
     version: 10.4.14(postcss@8.4.21)
+  discord-api-types:
+    specifier: ^0.37.38
+    version: 0.37.38
   eslint:
     specifier: 8.38.0
     version: 8.38.0
@@ -728,6 +731,10 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       path-type: 4.0.0
+    dev: false
+
+  /discord-api-types@0.37.38:
+    resolution: {integrity: sha512-p9dibYycLXY1FUM9bIuohYeHHwa/634394QE90n6Tlb6ID5HtCtXBPYY68oaOlFnlFLBJAOYATMwX5oiV+VqiA==}
     dev: false
 
   /dlv@1.1.3:
