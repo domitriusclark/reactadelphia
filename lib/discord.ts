@@ -1,5 +1,4 @@
-// ts ignore
-// @ts-ignore
+// @ts-nocheck
 
 import type {
   APIGuild,
