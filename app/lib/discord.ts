@@ -1,5 +1,4 @@
 import type {
-  APIThreadChannel,
   APIChannel,
   APIMessage,
   APIGuildForumChannel,  
@@ -7,9 +6,9 @@ import type {
 
 import { sortThreads } from "@/app/utils/sortThreads";
 
-const baseUrl = "https://discord.com/api/10";
+const baseUrl = "https://discord.com/api/v10";
 
-export async function getChannel(channelId: string | number) {
+export async function getChannel(channelId: string ) {
   try {
     const response = await fetch(`${baseUrl}/channels/${channelId}`, {
       headers: {
@@ -41,7 +40,7 @@ export async function getGuildChannels() {
   }
 }
 
-export async function getChannelMessages(channelId: string | number) {
+export async function getChannelMessages(channelId: string ) {
   try {
     const response = await fetch(`${baseUrl}/channels/${channelId}/messages`, {
       headers: {
@@ -84,7 +83,7 @@ export async function getChannelArchivedThreads(
         },
       }
     );
-    const threads: APIThreadChannel[] = await response.json();
+    const threads: APIGuildForumChannel[] = await response.json();    
 
     const sortedThreads = await sortThreads(threads);
 
@@ -94,7 +93,7 @@ export async function getChannelArchivedThreads(
   }
 }
 
-export async function getGuildActiveThreads(forumChannel: APIChannel) {
+export async function getChannelActiveThreads(forumChannel: APIChannel) {
   try {
     const response = await fetch(
       `${baseUrl}/guilds/${process.env.DISCORD_GUILD_ID}/threads/active`,
@@ -105,7 +104,9 @@ export async function getGuildActiveThreads(forumChannel: APIChannel) {
       }
     );
 
-    const threads: APIThreadChannel[] = await response.json();
+    const threads: APIGuildForumChannel[] = await response.json();
+
+    console.log("Active threads, ", threads)
 
     const activeThreadsFromForum = threads.filter(
       (thread) => thread.parent_id === forumChannel.id
@@ -123,11 +124,11 @@ export function getForum(channels: APIChannel[]){
   // 15 is the channel type for Forum Channels
   const forum = channels.find(
     (channel) =>
-      channel.type === 15 && channel.name === process.env.CHANNEL_NAME
+      channel.type === 15 && channel.name === process.env.DISCORD_CHANNEL_NAME
   ) as APIGuildForumChannel;
 
   if (!forum) {
-    throw new Error(`Could not find channel ${process.env.CHANNEL_NAME}`);
+    throw new Error(`Could not find channel ${process.env.DISCORD_CHANNEL_NAME}`);
   }
 
   return forum;
@@ -135,23 +136,28 @@ export function getForum(channels: APIChannel[]){
 
 export async function getGuildForumThreads() {
   const channels = await getGuildChannels();
+  
   if (channels) {
     const forumChannel = getForum(channels);    
-    const threads = await getGuildActiveThreads(forumChannel);
     const archivedThreads = await getChannelArchivedThreads(forumChannel.id);
+    const threads = await getChannelActiveThreads(forumChannel);
     if (threads && archivedThreads) {
-      const allThreads: APIThreadChannel[] = [...threads, ...archivedThreads];
+      const allThreads: APIGuildForumChannel[] = [...threads, ...archivedThreads];
 
       const tags = forumChannel.available_tags;
 
-      return allThreads.map((thread) => {
-        return {                
-            id: thread.id,
-            threads,
-            archivedThreads,
-            tags,
-        };
-      });
+      return {
+        allThreads
+      }
+
+      // return allThreads.map((thread) => {
+      //   return {                
+      //       id: thread.id,
+      //       threads,
+      //       archivedThreads,
+      //       tags,
+      //   };
+      // });
     }
   }
 }

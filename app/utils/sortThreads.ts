@@ -1,11 +1,11 @@
-import { APIMessage, APIThreadChannel } from "discord-api-types/v10";
+import { APIMessage, APIGuildForumChannel, APIGuild } from "discord-api-types/v10";
 import { getChannelMessage } from "@/app/lib/discord";
 
-interface SortedThread extends APIThreadChannel {
+interface SortedThread extends APIGuildForumChannel {
     lastMessage: APIMessage | undefined;
 }
 
-export async function sortThreads(activeThreadsFromForum: APIThreadChannel[]) {
+export async function sortThreads(activeThreadsFromForum: APIGuildForumChannel[]) {
     const sortedThreads = await Promise.all(
       activeThreadsFromForum.map(async (thread) => {
         if (thread.last_message_id) {
