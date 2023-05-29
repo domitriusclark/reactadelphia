@@ -1,12 +1,6 @@
 import Image from "next/image";
-import { 
-  getGuildChannels,
-  getForum,
-  getChannelActiveThreads,
-getChannelArchivedThreads,
-getGuildForumThreads
 
- } from "@/app/lib/discord";
+import { getGuildForumThreads } from "@/app/lib/discord";
 
 export default async function Home() {
   console.log("Threads", await getGuildForumThreads())
