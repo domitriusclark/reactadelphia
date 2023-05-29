@@ -1,13 +1,13 @@
 import Image from "next/image";
 
-export default function Home() {
+export default async function Home() {
   return (
     <main className="flex flex-col items-center justify-between min-h-screen p-24">
       <Image
-        src="/reactadelphia_logo.png"
+        src="/reactadelphia-logo.png"
         alt="Reactadelphia logo"
-        width={500}
-        height={300}
+        width={700}
+        height={500}
       />
     </main>
   );
