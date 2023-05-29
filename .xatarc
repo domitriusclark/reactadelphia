@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://Domitrius-s-workspace-r0npit.us-east-1.xata.sh/db/reactadelphia",
+  "codegen": {
+    "output": "app/lib/xata.codegen.ts"
+  }
+}
