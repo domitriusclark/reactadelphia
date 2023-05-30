@@ -119,9 +119,7 @@ export async function getChannelActiveThreads(forumChannel: APIGuildForumChannel
       }
     );
     
-    const sortedThreads = await sortThreads(activeThreadsFromForum);
-
-      console.log({sortedThreads})
+    const sortedThreads = await sortThreads(activeThreadsFromForum);     
 
     return sortedThreads;
   } catch (err) {
