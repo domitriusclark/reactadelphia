@@ -2,10 +2,13 @@ import type {
   APIChannel,
   APIMessage,
   APIGuildForumChannel,
-  APIGuildScheduledEvent,  
+  APIGuildScheduledEvent,
+  APIThreadList,  
+  APIThreadChannel
 } from "discord-api-types/v10";
 
 import { sortThreads } from "@/app/utils/sortThreads";
+
 
 const baseUrl = "https://discord.com/api/v10";
 
@@ -84,9 +87,9 @@ export async function getChannelArchivedThreads(
         },
       }
     );
-    const threads: APIGuildForumChannel[] = await response.json();    
+    const threads: APIThreadList = await response.json();         
 
-    const sortedThreads = await sortThreads(threads);
+    const sortedThreads = await sortThreads(threads.threads);
 
     return sortedThreads;
   } catch (err) {
@@ -94,7 +97,7 @@ export async function getChannelArchivedThreads(
   }
 }
 
-export async function getChannelActiveThreads(forumChannel: APIChannel) {
+export async function getChannelActiveThreads(forumChannel: APIGuildForumChannel) {
   try {
     const response = await fetch(
       `${baseUrl}/guilds/${process.env.DISCORD_GUILD_ID}/threads/active`,
@@ -105,15 +108,20 @@ export async function getChannelActiveThreads(forumChannel: APIChannel) {
       }
     );
 
-    const threads: APIGuildForumChannel[] = await response.json();
-
-    console.log("Active threads, ", threads)
-
-    const activeThreadsFromForum = threads.filter(
-      (thread) => thread.parent_id === forumChannel.id
+    const data: APIThreadList = await response.json()    
+     
+    const activeThreadsFromForum = data.threads.filter(
+      (thread) => {
+        if (thread.type === 11) {
+          const forum = thread as APIThreadChannel                    
+          return forum.parent_id === forumChannel.id          
+        }        
+      }
     );
-
+    
     const sortedThreads = await sortThreads(activeThreadsFromForum);
+
+      console.log({sortedThreads})
 
     return sortedThreads;
   } catch (err) {
@@ -137,30 +145,17 @@ export function getForum(channels: APIChannel[]){
 
 export async function getGuildForumThreads() {
   const channels = await getGuildChannels();
+  const forumChannel = getForum(channels);    
+  const archivedThreads = await getChannelArchivedThreads(forumChannel.id);
+  const activeThreads = await getChannelActiveThreads(forumChannel);    
   
-  if (channels) {
-    const forumChannel = getForum(channels);    
-    const archivedThreads = await getChannelArchivedThreads(forumChannel.id);
-    const threads = await getChannelActiveThreads(forumChannel);
-    if (threads && archivedThreads) {
-      const allThreads: APIGuildForumChannel[] = [...threads, ...archivedThreads];
+  const allThreads = [...activeThreads, ...archivedThreads];  
+  const tags = forumChannel.available_tags;
 
-      const tags = forumChannel.available_tags;
-
-      return {
-        allThreads
-      }
-
-      // return allThreads.map((thread) => {
-      //   return {                
-      //       id: thread.id,
-      //       threads,
-      //       archivedThreads,
-      //       tags,
-      //   };
-      // });
-    }
-  }
+  return {
+    threads: allThreads,
+    tags    
+  }  
 }
 
 export async function getGuildScheduledEvents() {  

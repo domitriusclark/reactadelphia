@@ -1,9 +1,10 @@
 import Image from "next/image";
 
-import { getGuildForumThreads } from "@/app/lib/discord";
+import { getGuildForumThreads, getGuildScheduledEvents } from "@/app/lib/discord";
 
 export default async function Home() {
-  console.log("Threads", await getGuildForumThreads())
+  console.log("Events", await getGuildScheduledEvents())
+  
   return (
     <main className="flex flex-col items-center justify-between min-h-screen p-24">
       <Image
