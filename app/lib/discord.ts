@@ -1,7 +1,8 @@
 import type {
   APIChannel,
   APIMessage,
-  APIGuildForumChannel,  
+  APIGuildForumChannel,
+  APIGuildScheduledEvent,  
 } from "discord-api-types/v10";
 
 import { sortThreads } from "@/app/utils/sortThreads";
@@ -160,4 +161,16 @@ export async function getGuildForumThreads() {
       // });
     }
   }
+}
+
+export async function getGuildScheduledEvents() {  
+  const res = await fetch(`${baseUrl}/guilds/${process.env.DISCORD_GUILD_ID}/scheduled-events`, {
+    headers: {
+      Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+    },
+  });
+
+  const scheduledEvents: APIGuildScheduledEvent[] = await res.json();
+
+  return scheduledEvents;
 }
